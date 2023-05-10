@@ -1,7 +1,5 @@
 import pytest
 
-from entity.table import Table, SaleProperty
-
 
 class Test:
     @pytest.mark.skip()
