@@ -1,6 +1,13 @@
 from unittest.mock import MagicMock
 import pytest
-from entity.player import DemandingStrategy, Player, RandomStrategy
+
+from entity.player import \
+    DemandingStrategy, \
+    CautiousStrategy, \
+    ImpulsiveStrategy, \
+    RandomStrategy, \
+    Player, \
+    build_player
 
 
 @pytest.fixture(scope="function")
@@ -48,6 +55,22 @@ class TestPlayer:
         mock_strategy.make_decision.assert_called_once()
         assert res
 
+    def test_player_build_random(self):
+        p = build_player("random")
+        assert isinstance(p.strategy, RandomStrategy)
+
+    def test_player_build_cautious(self):
+        p = build_player("cautious")
+        assert isinstance(p.strategy, CautiousStrategy)
+
+    def test_player_build_impulsive(self):
+        p = build_player("impulsive")
+        assert isinstance(p.strategy, ImpulsiveStrategy)
+
+    def test_player_build_demanding(self):
+        p = build_player("demanding")
+        assert isinstance(p.strategy, DemandingStrategy)
+
 
 class TestStrategy:
 
@@ -75,11 +98,20 @@ class TestStrategy:
 
         assert res
 
-    def test_demanding_strategy_agree(self):
+    def test_cautious_strategy_agree(self):
         RENT_VALUE = 51
         PLAYER_BALANCE = 100
 
-        strategy = DemandingStrategy()
+        strategy = CautiousStrategy()
         res = strategy.make_decision(RENT_VALUE, PLAYER_BALANCE)
 
         assert res
+
+    def test_cautious_strategy_deny(self):
+        RENT_VALUE = 51
+        PLAYER_BALANCE = 70
+
+        strategy = CautiousStrategy()
+        res = strategy.make_decision(RENT_VALUE, PLAYER_BALANCE)
+
+        assert not res

@@ -29,13 +29,17 @@ class DemandingStrategy(PlayerStrategy):
     def make_decision(self, rent_value: int, player_balance: int) -> bool:
         if rent_value > 50:
             return True
+
         return False
 
 
 class CautiousStrategy(PlayerStrategy):
 
     def make_decision(self, rent_value: int, player_balance: int) -> bool:
-        pass
+        if player_balance > 80:
+            return True
+
+        return False
 
 
 class Player:
@@ -58,10 +62,25 @@ class Player:
         return self.strategy.make_decision(rent_value, self.bank)
 
 
-# def build_player(name: str) -> Player:
-#     match strategy:
-#         case "random":
-#             return Player(
-#                 name="JohnRandom",
-#                 strategy=RandomStrategy()
-#             )
+def build_player(strategy_name: str) -> Player:
+    match strategy_name:
+        case "random":
+            return Player(
+                name="JohnRandom",
+                strategy=RandomStrategy()
+            )
+        case "cautious":
+            return Player(
+                name="NedCautious",
+                strategy=CautiousStrategy()
+            )
+        case "impulsive":
+            return Player(
+                name="RobbImpulsive",
+                strategy=ImpulsiveStrategy()
+            )
+        case "demanding":
+            return Player(
+                name="CatelynDemanding",
+                strategy=DemandingStrategy()
+            )
