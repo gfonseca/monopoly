@@ -1,40 +1,50 @@
 #! /usr/bin/env python3
+
 from functools import reduce
-from gameengine import GameEngine
 from termcolor import colored
+from typing import List
 
-from usecases.player import bootstrap_players
+from usecases.player import bootstrap_players, player_walk, player_action
+from entity.player import Player
+from entity.table import Table
+from utils import add_stats, print_stats
 
-GAMES_TOTAL = 1000
+
+GAMES_TOTAL = 300
 STATS = {}
 
 
-def add_stats(name):
-    if name not in STATS:
-        STATS[name] = 1
-        return
+class GameEngine:
 
-    STATS[name] += 1
+    def __init__(self, players: List[Player]):
+        self.players: List[Player] = players
+        self.table: Table = Table()
+        self.winner = None
 
+    def turn(self):
+        for k, p in enumerate(self.players):
+            player_walk(p, self.table)
+            player_action(p, self.table)
 
-def print_stats(stats: dict):
-    colors = ["yellow", "white", "red", "blue"]
-    timeouts = stats.pop("Timeout")
-    place: int = 0
-    total_wins = reduce(lambda x, y : x+y, stats.values())
-    d = list(stats.items())
-    d.sort(reverse=True, key=lambda t: t[1])
-    print(colored(" "*8 + "MONOPOLY\n", "blue"))
-    print(colored(" - PLAYER NAME -\t- WINS -\t- RATE -", "blue"))
-    for name, victories in d:
-        vic_tax = "%.2f" % (victories/total_wins*100)
-        print(colored(f"{place+1}◉  {name}:\t  {victories}\t\t {vic_tax}%", colors[place]))
-        place += 1
-    print("\n")
+            if p.is_broke():
+                del self.players[k]
 
-    print(f"Players Wins:\t{total_wins}")
-    print(f"Matches totals:\t{GAMES_TOTAL}")
-    print(f"Timeouts:\t{timeouts}")
+            if len(self.players) <= 1:
+                self.winner = self.players[0]
+                break
+
+    def run(self) -> Player | None:
+        turn: int = 0
+        while self.winner is None:
+            self.turn()
+            if turn > 1000:
+                break
+            turn += 1
+
+        if self.winner is None:
+            return None
+
+        return self.winner
 
 
 if __name__ == "__main__":
