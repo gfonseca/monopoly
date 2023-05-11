@@ -41,9 +41,12 @@ class TestUsecasesPlayer:
     def test_player_action_pay_rent(self, mocker):
         PLAYER_SQUARE = 13
         RENTAL_VALUE = 50
+        SALE_VALUE = 500
+
         mock_player2: MagicMock = mocker.patch("entity.player.Player")
         mock_player: MagicMock = mocker.patch("entity.player.Player")
         mock_player.pay_rent: MagicMock = mocker.Mock()
+        mock_player.bank: 200
         mock_player.square = PLAYER_SQUARE
 
         mock_table: MagicMock = mocker.patch("entity.table.Table")
@@ -51,6 +54,7 @@ class TestUsecasesPlayer:
         mock_prop: MagicMock = mocker.patch("entity.property.SaleProperty")
         mock_prop.get_owner: MagicMock = mocker.Mock()
         mock_prop.rental_value = RENTAL_VALUE
+        mock_prop.sale_value = SALE_VALUE
         mock_prop.get_owner.return_value = mock_player2
 
         mock_table: MagicMock = mocker.patch("entity.table.Table")
@@ -67,9 +71,11 @@ class TestUsecasesPlayer:
     def test_player_action_pay_rent(self, mocker):
         PLAYER_SQUARE = 13
         RENTAL_VALUE = 50
+        SALE_VALUE = 500
 
         mock_player: MagicMock = mocker.patch("entity.player.Player")
         mock_player.pay_rent: MagicMock = mocker.Mock()
+        mock_player.bank = SALE_VALUE
         mock_player.make_decision: MagicMock = mocker.Mock()
         mock_player.square = PLAYER_SQUARE
 
@@ -78,6 +84,7 @@ class TestUsecasesPlayer:
         mock_prop: MagicMock = mocker.patch("entity.property.SaleProperty")
         mock_prop.get_owner: MagicMock = mocker.Mock()
         mock_prop.rental_value = RENTAL_VALUE
+        mock_prop.sale_value = SALE_VALUE
         mock_prop.get_owner.return_value = None
 
         mock_table: MagicMock = mocker.patch("entity.table.Table")
