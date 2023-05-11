@@ -2,6 +2,7 @@ Monopoly
 ---
 
 A monopoly game simulation for 4 players strategy.
+![screenshot](https://github.com/gfonseca/monopoly/blob/main/assets/screenshot.png?raw=true "Monopoly").
 
 ## Architecture
 I opted for DDD simplified architecture in this project. We have the **entities/**
