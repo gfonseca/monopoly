@@ -74,6 +74,29 @@ class TestPlayer:
         assert player_john.square == 5
         assert player_john.bank == 300
 
+    def test_play_rent(self, mocker, player_john: Player):
+        RENT_VALUE = 300
+        player_b = mocker.patch("entity.player.Player")
+        player_b.receive_money: MagicMock = mocker.Mock()
+
+        player_john.bank = 400
+        player_john.pay_rent(player_b, RENT_VALUE)
+
+        assert player_john.bank == 100
+        player_b.receive_money.assert_called_once_with(RENT_VALUE)
+
+    def test_play_rent_low_budget(self, mocker, player_john: Player):
+        RENT_VALUE = 300
+        PLAYER_BUDGET = 100
+        player_b = mocker.patch("entity.player.Player")
+        player_b.receive_money: MagicMock = mocker.Mock()
+
+        player_john.bank = PLAYER_BUDGET
+        player_john.pay_rent(player_b, RENT_VALUE)
+
+        assert player_john.bank == -200
+        player_b.receive_money.assert_called_once_with(PLAYER_BUDGET)
+
     def test_player_build_random(self):
         p = build_player("random")
         assert isinstance(p.strategy, RandomStrategy)
@@ -107,7 +130,7 @@ class TestStrategy:
         strategy = DemandingStrategy()
         res = strategy.make_decision(RENT_VALUE, PLAYER_BALANCE)
 
-        assert res == False
+        assert not res
 
     def test_demanding_strategy_agree(self):
         RENT_VALUE = 51

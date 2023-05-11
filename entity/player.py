@@ -70,6 +70,14 @@ class Player:
 
         self.square += walk_squares
 
+    def pay_rent(self, player_b: "Player", amount: int):
+        self.pay_money(amount)
+
+        if self.bank < 0:
+            amount = amount + self.bank
+
+        player_b.receive_money(amount)
+
     def make_decision(self, rent_value: int) -> bool:
         return self.strategy.make_decision(rent_value, self.bank)
 
