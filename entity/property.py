@@ -10,7 +10,7 @@ class SaleProperty:
         self.sale_value: int = sale_value
         self.rental_value: int = self._calc_rent_value(sale_value)
 
-    def getOwner(self) -> Player | None:
+    def get_owner(self) -> Player | None:
         return self.owner
 
     def _calc_rent_value(self, value: int) -> int:
