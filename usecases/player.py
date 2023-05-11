@@ -2,6 +2,7 @@ from typing import List
 import random
 
 from entity.player import Player, build_player
+from entity.property import SaleProperty
 from entity.table import Table
 
 
@@ -17,16 +18,20 @@ def bootstrap_players():
     return players
 
 
-def make_money_transaction(player_a: Player, player_b: Player, amount: int):
-    player_a.pay_money(amount)
-
-    if player_a.bank < 0:
-        amount = amount + player_a.bank
-
-    player_b.receive_money(amount)
-
-
 def player_walk(player: Player, table: Table):
     dice = random.randint(1, 6)
     table_size = table.get_size()
     player.walk(dice, table_size)
+
+
+def player_action(player: Player, table: Table):
+    sale_property: SaleProperty = table[player.square]
+
+    owner = sale_property.get_owner()
+
+    if owner:
+        player.pay_rent(owner, sale_property.rental_value)
+        return
+
+    if player.make_decision(sale_property.rental_value):
+        sale_property.owner = player

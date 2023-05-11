@@ -3,19 +3,13 @@ import pytest
 
 from usecases.player import \
     bootstrap_players, \
-    make_money_transaction, \
-    player_walk 
+    player_walk, \
+    player_action
 
 
 @pytest.fixture(scope="function")
 def receive_money_mock(mocker):
     return mocker.patch("entity.player.Player.receive_money")
-
-
-@pytest.fixture
-def pay_money_mock(mocker):
-    return mocker.patch("entity.player.Player.pay_money")
-
 
 @pytest.fixture
 def player_mock(mocker):
@@ -27,44 +21,6 @@ class TestUsecasesPlayer:
     def test_boot_strap_players(self, receive_money_mock: MagicMock):
         bootstrap_players()
         assert receive_money_mock.call_count == 4
-
-    def test_make_money_transaction(
-        self,
-        player_mock,
-        pay_money_mock: MagicMock,
-        receive_money_mock: MagicMock
-    ):
-        TRANSACTION_AMOUNT = 500
-        player_mock.bank = 500
-
-        make_money_transaction(
-            player_a=player_mock,
-            player_b=player_mock,
-            amount=TRANSACTION_AMOUNT
-        )
-
-        pay_money_mock.assert_called_once_with(TRANSACTION_AMOUNT)
-        receive_money_mock.assert_called_once_with(TRANSACTION_AMOUNT)
-
-    def test_money_transaction_low_budget(
-        self,
-        player_mock,
-        pay_money_mock: MagicMock,
-        receive_money_mock: MagicMock
-    ):
-        TRANSACTION_AMOUNT = 500
-        PLAYER_A_BUDGET = 250
-
-        player_mock.bank = -250
-
-        make_money_transaction(
-            player_a=player_mock,
-            player_b=player_mock,
-            amount=TRANSACTION_AMOUNT
-        )
-
-        pay_money_mock.assert_called_once_with(TRANSACTION_AMOUNT)
-        receive_money_mock.assert_called_once_with(PLAYER_A_BUDGET)
 
     def test_player_walk(self, mocker, player_mock):
         DICE_VALUE = 4
@@ -81,3 +37,58 @@ class TestUsecasesPlayer:
         player_walk(player_mock, table_mock)
 
         walk_mock.assert_called_once_with(DICE_VALUE, TABLE_SIZE)
+
+    def test_player_action_pay_rent(self, mocker):
+        PLAYER_SQUARE = 13
+        RENTAL_VALUE = 50
+        mock_player2: MagicMock = mocker.patch("entity.player.Player")
+        mock_player: MagicMock = mocker.patch("entity.player.Player")
+        mock_player.pay_rent: MagicMock = mocker.Mock()
+        mock_player.square = PLAYER_SQUARE
+
+        mock_table: MagicMock = mocker.patch("entity.table.Table")
+
+        mock_prop: MagicMock = mocker.patch("entity.property.SaleProperty")
+        mock_prop.get_owner: MagicMock = mocker.Mock()
+        mock_prop.rental_value = RENTAL_VALUE
+        mock_prop.get_owner.return_value = mock_player2
+
+        mock_table: MagicMock = mocker.patch("entity.table.Table")
+        mock_table.__getitem__: MagicMock = mocker.Mock()
+        mock_table.__getitem__.return_value = mock_prop
+
+        player_action(mock_player, mock_table)
+
+        mock_player.pay_rent.assert_called_once_with(mock_player2, RENTAL_VALUE)
+        mock_table.__getitem__.assert_called_once_with(PLAYER_SQUARE)
+        mock_prop.get_owner.assert_called_once()
+
+
+    def test_player_action_pay_rent(self, mocker):
+        PLAYER_SQUARE = 13
+        RENTAL_VALUE = 50
+
+        mock_player: MagicMock = mocker.patch("entity.player.Player")
+        mock_player.pay_rent: MagicMock = mocker.Mock()
+        mock_player.make_decision: MagicMock = mocker.Mock()
+        mock_player.square = PLAYER_SQUARE
+
+        mock_table: MagicMock = mocker.patch("entity.table.Table")
+
+        mock_prop: MagicMock = mocker.patch("entity.property.SaleProperty")
+        mock_prop.get_owner: MagicMock = mocker.Mock()
+        mock_prop.rental_value = RENTAL_VALUE
+        mock_prop.get_owner.return_value = None
+
+        mock_table: MagicMock = mocker.patch("entity.table.Table")
+        mock_table.__getitem__: MagicMock = mocker.Mock()
+        mock_table.__getitem__.return_value = mock_prop
+
+        player_action(mock_player, mock_table)
+
+        mock_player.pay_rent.assert_not_called()
+        mock_player.make_decision.assert_called_once_with(RENTAL_VALUE)
+        mock_table.__getitem__.assert_called_once_with(PLAYER_SQUARE)
+        mock_prop.get_owner.assert_called_once()
+
+        assert mock_prop.owner == mock_player
