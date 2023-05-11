@@ -17,6 +17,7 @@ def bootstrap_players():
     random.shuffle(players)
     return players
 
+# def expropriate_player(player: Player)
 
 def player_walk(player: Player, table: Table):
     dice = random.randint(1, 6)

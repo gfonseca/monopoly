@@ -38,6 +38,10 @@ class TestUsecasesPlayer:
 
         walk_mock.assert_called_once_with(DICE_VALUE, TABLE_SIZE)
 
+    # def test_expropriate_player(self):
+
+    #     expropriate_player(player, table)
+
     def test_player_action_pay_rent(self, mocker):
         PLAYER_SQUARE = 13
         RENTAL_VALUE = 50

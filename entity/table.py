@@ -1,5 +1,7 @@
 from typing import List
 
+from entity.player import Player
+
 from .property import SaleProperty
 
 
@@ -21,6 +23,13 @@ class Table:
 
     def get_size(self):
         return len(self.squares)
+
+    def expropriate_player(self, player: Player):
+        properties = filter(lambda x: x.owner is not None,  self.squares)
+        for s in properties:
+            owner = s.get_owner()
+            if owner.name == player.name:
+                s.owner = None
 
     def __getitem__(self, i: int) -> SaleProperty:
         return self.squares[i]
