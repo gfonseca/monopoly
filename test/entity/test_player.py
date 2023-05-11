@@ -55,6 +55,25 @@ class TestPlayer:
         mock_strategy.make_decision.assert_called_once()
         assert res
 
+    def test_player_walk(self, player_john):
+        player_john.walk(3, 20)
+
+        assert player_john.square == 3
+
+    def test_player_walk_cycle(self, player_john):
+        player_john.square = 17
+        player_john.walk(3, 20)
+
+        assert player_john.square == 0
+
+    def test_player_walk_cycle_w_wage(self, player_john):
+        player_john.square = 19
+        player_john.bank = 200
+        player_john.walk(6, 20)
+
+        assert player_john.square == 5
+        assert player_john.bank == 300
+
     def test_player_build_random(self):
         p = build_player("random")
         assert isinstance(p.strategy, RandomStrategy)

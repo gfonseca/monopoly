@@ -44,10 +44,13 @@ class CautiousStrategy(PlayerStrategy):
 
 class Player:
 
+    WAGE = 100
+
     def __init__(self, name: str, strategy: PlayerStrategy):
         self.strategy: PlayerStrategy = strategy
         self.name: str = name
         self.bank: int = 0
+        self.square: int = 0
 
     def is_broke(self) -> bool:
         return self.bank < 0
@@ -57,6 +60,15 @@ class Player:
 
     def pay_money(self, amount: int):
         self.bank -= amount
+
+    def walk(self, walk_squares: int, table_size: int) -> bool:
+
+        if (self.square + walk_squares) > table_size - 1:
+            self.bank += Player.WAGE
+            self.square = (self.square - table_size) + walk_squares
+            return
+
+        self.square += walk_squares
 
     def make_decision(self, rent_value: int) -> bool:
         return self.strategy.make_decision(rent_value, self.bank)
