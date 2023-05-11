@@ -86,21 +86,21 @@ def build_player(strategy_name: str) -> Player:
     match strategy_name:
         case "random":
             return Player(
-                name="JohnRandom",
+                name="John Random",
                 strategy=RandomStrategy()
             )
         case "cautious":
             return Player(
-                name="NedCautious",
+                name="Ned Cautious",
                 strategy=CautiousStrategy()
             )
         case "impulsive":
             return Player(
-                name="RobbImpulsive",
+                name="Robb Impulsive",
                 strategy=ImpulsiveStrategy()
             )
         case "demanding":
             return Player(
-                name="CatelynDemanding",
+                name="Caty Demanding",
                 strategy=DemandingStrategy()
             )

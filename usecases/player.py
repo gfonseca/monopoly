@@ -26,7 +26,6 @@ def player_walk(player: Player, table: Table):
 
 def player_action(player: Player, table: Table):
     sale_property: SaleProperty = table[player.square]
-
     owner = sale_property.get_owner()
 
     # Fell in private property

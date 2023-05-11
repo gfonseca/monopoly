@@ -19,5 +19,8 @@ class Table:
             for i in range(Table.TABLE_SIZE)
         ]
 
+    def get_size(self):
+        return len(self.squares)
+
     def __getitem__(self, i: int) -> SaleProperty:
         return self.squares[i]
