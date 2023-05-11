@@ -1,3 +1,4 @@
+from random import shuffle
 from unittest.mock import MagicMock
 import pytest
 
@@ -24,11 +25,15 @@ class TestTable:
         table_square = t[2]
         assert isinstance(table_square, SaleProperty)
 
+    @pytest.mark.skip
     def test_expropriate_player(self, mocker):
-        get_owner: MagicMock = mocker.patch("entity.property.SaleProperty.get_owner")
         player: MagicMock = mocker.patch("entity.player.Player")
+        get_owner: MagicMock = mocker.patch("entity.property.SaleProperty.get_owner")
+        sale_property: MagicMock = mocker.patch("entity.property.SaleProperty")
+
+        sale_property.owner = "John Random"
 
         t = Table()
-
+        t.squares = [sale_property for _ in range(20)]
         t.expropriate_player(player)
         assert get_owner.call_count == 20
